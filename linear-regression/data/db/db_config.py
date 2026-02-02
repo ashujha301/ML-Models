@@ -20,7 +20,7 @@ engine = create_engine(DB_URl, echo=True)
 try:
     with engine.connect() as connection:
         result = connection.execute(text("Select 1"))
-        print("DATABASE CONNECTED SUCCESFULLY")
+        print("DATABASE CONNECTED SUCCESSFULLY")
         print("Result:", result.fetchone())
 except Exception as e:
     print("DATABASE CONNECTION FAILED")
