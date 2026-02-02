@@ -1,8 +1,0 @@
-#DB requirements
-sqlalchemy 
-psycopg2-binary 
-python-dotenv
-
-#Maths
-pandas
-numpy
