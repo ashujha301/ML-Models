@@ -1,13 +1,14 @@
 from data.db.db_config import engine
-from data.db.table_models import ( FEATURE_VIEW_REGISTRY_SQL, FEATURE_REGISTRY_SQL )
+from data.db.table_models import ( FEATURE_VIEW_REGISTRY_SQL, FEATURE_REGISTRY_SQL, TRAINING_RUNS_LOGS_SQL)
 from sqlalchemy import text
 
 def init_feature_tables():
     with engine.begin() as conn:
         conn.execute(text(FEATURE_REGISTRY_SQL))
         conn.execute(text(FEATURE_VIEW_REGISTRY_SQL))
+        conn.execute(text(TRAINING_RUNS_LOGS_SQL))
 
-        print("Feature registry tables created successfully")
+        print(f"Tables created successfully--->")
 
 
 if __name__ == "__main__":
