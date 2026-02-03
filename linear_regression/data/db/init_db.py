@@ -1,5 +1,5 @@
-from db_config import engine
-from table_models import ( FEATURE_VIEW_REGISTRY_SQL, FEATURE_REGISTRY_SQL )
+from data.db.db_config import engine
+from data.db.table_models import ( FEATURE_VIEW_REGISTRY_SQL, FEATURE_REGISTRY_SQL )
 from sqlalchemy import text
 
 def init_feature_tables():
