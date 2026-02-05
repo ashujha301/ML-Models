@@ -1,9 +1,12 @@
 import pandas as pd 
 from sqlalchemy import text
-from db_config import engine
+from data.db.db_config import engine
 
-CSV_PATH = "../raw/marketing_campaign_dataset.csv"
-TABLE_NAME= "marketing_campaign_raw"
+
+# CSV_PATH = "data/raw/marketing_campaign_dataset.csv"
+# TABLE_NAME= "marketing_campaign_raw"
+CSV_PATH = "data/raw/housing.csv"
+TABLE_NAME= "housing_raw"
 
 def load_csv_to_db():
     df = pd.read_csv(CSV_PATH)

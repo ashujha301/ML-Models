@@ -7,12 +7,20 @@ from src.training.metrices import mse, rmse, r2_score
 from sqlalchemy import text
 from data.db.db_config import engine
 
+import os
+import pickle
+
+MODEL_DIR = "models"
+MODEL_PATH = os.path.join(MODEL_DIR, "linear_regression_gd.pkl")
+SCALER_PATH = os.path.join(MODEL_DIR, "standardizer.pkl")
+
 FEATURE_VIEW_BASIC_V1 = "feature_view_basic_v1"
 FEATURE_VIEW_EFFICIENCY_V2 = "feature_view_efficiency_v2"
 FEATURE_VIEW_HYBRID_V3 = "feature_view_hybrid_v3"
 FEATURE_VIEW_INTERACTIONS_V4 = "feature_view_interactions_v4"
 FEATURE_VIEW_CLICKS_V1 = "feature_view_clicks_v1"
 FEATURE_VIEW_IMPRESSIONS_V1 = "feature_view_impressions_v1"
+FEATURE_VIEW_HOUSING_V1 = "feature_view_housing_v1"
 MODEL_NAME = "linear_regression_gd"
 
 def log_training_run(feature_view, model_name, mse_val, rmse_val, r2_val):
@@ -44,7 +52,8 @@ def train():
     # X, y = load_feature_view(FEATURE_VIEW_HYBRID_V3)
     # X, y = load_feature_view(FEATURE_VIEW_INTERACTIONS_V4)
     # X, y = load_feature_view(FEATURE_VIEW_CLICKS_V1)
-    X, y = load_feature_view(FEATURE_VIEW_IMPRESSIONS_V1)
+    # X, y = load_feature_view(FEATURE_VIEW_IMPRESSIONS_V1)
+    X, y = load_feature_view(FEATURE_VIEW_HOUSING_V1)
 
     # Split data
     X_train, y_train, X_val, y_val, X_test, y_test = train_val_test_split(X, y)
@@ -76,12 +85,25 @@ def train():
         # FEATURE_VIEW_HYBRID_V3,
         # FEATURE_VIEW_INTERACTIONS_V4,
         # FEATURE_VIEW_CLICKS_V1,
-        FEATURE_VIEW_IMPRESSIONS_V1,
+        # FEATURE_VIEW_IMPRESSIONS_V1,
+        FEATURE_VIEW_HOUSING_V1,
         MODEL_NAME,
         mse_val,
         rmse_val,
         r2_val
     )
+
+    # Save model
+    os.makedirs(MODEL_DIR, exist_ok=True)
+
+    with open(MODEL_PATH, "wb") as f:
+        pickle.dump(model, f)
+
+    with open(SCALER_PATH, "wb") as f:
+        pickle.dump((mean, std), f)
+
+    print(f"Model saved -> {MODEL_PATH }")
+    print(f"Scaler saved -> {SCALER_PATH }")
 
 if __name__ == "__main__":
     train()

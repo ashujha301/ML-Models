@@ -1,7 +1,9 @@
-def detect_feature_drift( train_stats, current_stats, threshold=0.2):
+import numpy as np
 
-    for feature in train_stats:
-        shift = abs(current_stats[feature]["mean"] - train_stats[feature]["mean"])
-
-        if shift > threshold:
-            print(f" DRIFT detected in {feature}")
+def detect_drift(x_scaled: np.ndarray, threshold=6):
+    """
+    Simple drift detection:
+    If any feature > threshold std → drift warning
+    """
+    drift_flags = np.abs(x_scaled) > threshold
+    return bool(np.any(drift_flags))

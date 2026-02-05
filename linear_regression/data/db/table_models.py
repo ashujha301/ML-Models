@@ -38,3 +38,18 @@ CREATE TABLE IF NOT EXISTS training_runs (
 );
 
 """
+
+INFERENCE_LOGS = """
+
+CREATE TABLE IF NOT EXISTS inference_logs (
+    id SERIAL PRIMARY KEY,
+    model_name TEXT,
+    feature_view TEXT,
+    prediction FLOAT,
+    confidence FLOAT,
+    drift_detected BOOLEAN,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+"""
