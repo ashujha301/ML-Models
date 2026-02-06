@@ -1,4 +1,4 @@
-# Linear Regression – Marketing Revenue Prediction (From Scratch)
+# Linear Regression – (From Scratch)
 
 ## Project Overview
 
@@ -11,23 +11,28 @@ The goal is not just to train a model, but to design an **end-to-end ML pipeline
 - Model training from scratch ( Without using pre build ml-models )
 - Inference and logging
 - Testing and reproducibility
+- Pipeline script
 
 ---
 
 ## Dataset
 
 ### Dataset Name
-**Marketing Campaign Performance Dataset**
+1. **Marketing Campaign Performance Dataset** Link :- https://www.kaggle.com/datasets/manishabhatt22/marketing-campaign-performance-dataset/data
+2. **California Housing Price Dataset** Link :- https://www.kaggle.com/datasets/camnugent/california-housing-prices
 
 ### Source
 Downloaded from Kaggle and stored locally as raw data.
 
 ### Dataset Characteristics
-The dataset contains performance metrics of marketing campaigns, including:
+The dataset contains performance metrics of Both Dataset, including:
 - Spend-related features
+- Housing features
 - Engagement metrics
 - Conversion-related signals
 - Revenue outcomes
+- Inference Log
+- Training runs log
 
 The raw dataset is ingested **as-is** into PostgreSQL without transformations.
 
@@ -42,4 +47,5 @@ The raw dataset is ingested **as-is** into PostgreSQL without transformations.
 ## Problem Statement
 
 ### Business Objective
-Predict **campaign revenue** based on campaign performance metrics.
+1. Predict **Clicks** based on performance metrics on **Marketing Campaign Raw** data.
+2. Predict **House price** based on the metrics on **Housing Raw** data.
