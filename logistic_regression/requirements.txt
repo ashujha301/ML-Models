@@ -1,0 +1,11 @@
+#DB requirements
+sqlalchemy 
+psycopg2-binary 
+python-dotenv
+
+# environment variables
+dotenv
+
+#Maths
+pandas
+numpy

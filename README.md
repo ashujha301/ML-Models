@@ -40,7 +40,9 @@ Each model folder is independent.
 1. Install dependencies
 2. Set up the database
 3. Train the model
-4. Run inference
+4. Store Model and scaler features
+5. Run inference on trained model and features
+6. Use Pipeline script to run a specific problem set
 
 Check the model-specific `README.md` for details.
 

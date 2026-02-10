@@ -1,0 +1,8 @@
+.env
+
+# Remove large dataset - download from the link given in readme.md file
+/data/raw/fraudTest.csv
+
+# Ignore all Python cache directories everywhere
+**/__pycache__/
+**/*.py[cod]
