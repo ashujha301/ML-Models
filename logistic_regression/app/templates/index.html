@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fraud Monitor</title>
+</head>
+<body>
+
+<h2>Live Fraud Alerts</h2>
+
+<ul id="alerts"></ul>
+
+<script>
+const ws = new WebSocket("ws://localhost:8000/ws");
+
+ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    const li = document.createElement("li");
+    li.textContent = "FRAUD: " + JSON.stringify(data);
+
+    document.getElementById("alerts").appendChild(li);
+};
+
+ws.onopen = () => {
+    console.log("Connected to fraud websocket");
+};
+</script>
+
+</body>
+</html>

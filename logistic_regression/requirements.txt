@@ -9,3 +9,10 @@ dotenv
 #Maths
 pandas
 numpy
+
+#Api framework
+fastapi
+
+#kafka
+uvicorn 
+kafka-python

@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS training_runs (
     feature_view TEXT NOT NULL,
     model_name TEXT NOT NULL,
     loss FLOAT,
-    rmse FLOAT,
-    r2_score FLOAT,
+    precision FLOAT,
+    recall FLOAT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
