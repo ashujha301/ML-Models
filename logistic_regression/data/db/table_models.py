@@ -41,13 +41,30 @@ CREATE TABLE IF NOT EXISTS training_runs (
 
 INFERENCE_LOGS = """
 
-CREATE TABLE IF NOT EXISTS inference_logs (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE inference_logs (
+    id BIGSERIAL PRIMARY KEY,
+    
+    batch_id UUID,
+
     model_name TEXT,
+    model_version TEXT,
     feature_view TEXT,
-    prediction FLOAT,
+
+    transaction_id TEXT,
+    prediction INT,
+    probability FLOAT,
+
     confidence FLOAT,
     drift_detected BOOLEAN,
+
+    amount FLOAT,
+    hour INT,
+    category_code INT,
+
+    latency_ms FLOAT,
+
+    raw_payload JSONB,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
