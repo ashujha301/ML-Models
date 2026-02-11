@@ -1,0 +1,18 @@
+#DB requirements
+sqlalchemy 
+psycopg2-binary 
+python-dotenv
+
+# environment variables
+dotenv
+
+#Maths
+pandas
+numpy
+
+#Api framework
+fastapi
+
+#kafka
+uvicorn
+kafka-python
