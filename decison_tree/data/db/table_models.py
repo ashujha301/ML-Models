@@ -112,6 +112,7 @@ DRIFT_EVENTS = """
 
 CREATE TABLE IF NOT EXISTS drift_events (
     id SERIAL PRIMARY KEY,
+    model_version TEXT,
     feature_name TEXT,
     current_mean FLOAT,
     baseline_mean FLOAT,

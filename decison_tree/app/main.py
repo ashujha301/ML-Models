@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 import threading
 import time
 from app import model_loader
-from app.model_loader import load_active_model, watch_for_new_model, model, version
+from app.model_loader import load_active_model, watch_for_new_model
 from app.logger import log_prediction
 from app.drift import check_drift
 from app.feature_name import FEATURE_NAMES
@@ -66,7 +66,7 @@ def predict(payload: dict):
         readable.append(step.replace(f"feature_{idx}", FEATURE_NAMES[idx]))
 
     latency = (time.time() - start) * 1000
-    drift = check_drift(payload)
+    # drift = check_drift(payload)
     latency = time.time() - start
 
     PREDICTION_COUNT.inc()
@@ -75,7 +75,9 @@ def predict(payload: dict):
         APPROVAL_COUNT.inc()
 
     PREDICTION_LATENCY.observe(latency)
-    DRIFT_SCORE.set(1 if drift else 0)
+    drift_score, drift_flag = check_drift(payload, model_loader.version)
+
+    DRIFT_SCORE.set(drift_score)
 
     log_prediction(
         model_loader.version,
@@ -91,5 +93,9 @@ def predict(payload: dict):
         "model_version": model_loader.version,
         "latency_ms": latency,
         "reason_path": readable,
-        "drift_detected": drift
+        "drift_detected": drift_score
     }
+
+@app.get("/metrics")
+def metrics():
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
