@@ -12,7 +12,10 @@ numpy
 
 #Api framework
 fastapi
+uvicorn[standard]
 
 #kafka
-uvicorn
 kafka-python
+
+#promethues
+prometheus-client

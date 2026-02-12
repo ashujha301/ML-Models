@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from contextlib import asynccontextmanager
 import threading
 import time
@@ -7,6 +7,14 @@ from app.model_loader import load_active_model, watch_for_new_model, model, vers
 from app.logger import log_prediction
 from app.drift import check_drift
 from app.feature_name import FEATURE_NAMES
+
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from app.metrics import (
+    PREDICTION_COUNT,
+    APPROVAL_COUNT,
+    PREDICTION_LATENCY,
+    DRIFT_SCORE
+)
 
 
 @asynccontextmanager
@@ -59,6 +67,15 @@ def predict(payload: dict):
 
     latency = (time.time() - start) * 1000
     drift = check_drift(payload)
+    latency = time.time() - start
+
+    PREDICTION_COUNT.inc()
+
+    if pred == 0:
+        APPROVAL_COUNT.inc()
+
+    PREDICTION_LATENCY.observe(latency)
+    DRIFT_SCORE.set(1 if drift else 0)
 
     log_prediction(
         model_loader.version,

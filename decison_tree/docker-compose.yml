@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+
+  fastapi:
+    build: .
+    container_name: loan_api
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: host.docker.internal
+      DB_PORT: 5432
+      DB_NAME: DecTree_db
+      DB_USER: postgres
+      DB_PASSWORD: Ashu%403001%40postgres
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - fastapi
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  pgdata:
