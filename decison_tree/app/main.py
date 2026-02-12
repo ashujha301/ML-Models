@@ -1,27 +1,31 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+import threading
 import time
-
-from app.model_loader import load_active_model, model, version
+from app import model_loader
+from app.model_loader import load_active_model, watch_for_new_model, model, version
 from app.logger import log_prediction
 from app.drift import check_drift
 from app.feature_name import FEATURE_NAMES
 
 
-# ---------------- LIFESPAN ----------------
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Loading active model...")
+    print("Starting API...")
+
     load_active_model()
-    print("Model loaded successfully")
+
+    t = threading.Thread(target=watch_for_new_model, daemon=True)
+    t.start()
+
     yield
-    print("Shutting down API...")
+
+    print("Shutting down API")
 
 
 app = FastAPI(lifespan=lifespan)
 
 
-# ---------------- PREDICT ----------------
 @app.post("/predict")
 def predict(payload: dict):
 
@@ -44,24 +48,20 @@ def predict(payload: dict):
         payload["has_cosigner"]
     ]
 
-    pred, path = model.predict_with_path([x])
+    pred, path = model_loader.model.predict_with_path([x])
     pred = pred[0]
     path = path[0]
 
-    # ---------- readable explanation ----------
     readable = []
     for step in path:
         idx = int(step.split("_")[1].split(" ")[0])
         readable.append(step.replace(f"feature_{idx}", FEATURE_NAMES[idx]))
 
     latency = (time.time() - start) * 1000
-
-    # ---------- drift ----------
     drift = check_drift(payload)
 
-    # ---------- log ----------
     log_prediction(
-        version,
+        model_loader.version,
         payload,
         int(pred),
         0.0,
@@ -71,7 +71,7 @@ def predict(payload: dict):
 
     return {
         "prediction": int(pred),
-        "model_version": version,
+        "model_version": model_loader.version,
         "latency_ms": latency,
         "reason_path": readable,
         "drift_detected": drift

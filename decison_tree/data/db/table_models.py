@@ -88,15 +88,18 @@ PREDICTION_LOGS = """
 
 CREATE TABLE IF NOT EXISTS prediction_logs (
     id SERIAL PRIMARY KEY,
+
     model_version TEXT,
     loan_id TEXT,
 
     prediction INT,
     probability FLOAT,
+    reason TEXT,
 
     age FLOAT,
     income FLOAT,
     credit_score FLOAT,
+    loan_amount FLOAT,
 
     latency_ms FLOAT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -109,13 +112,11 @@ DRIFT_EVENTS = """
 
 CREATE TABLE IF NOT EXISTS drift_events (
     id SERIAL PRIMARY KEY,
-
-    model_version TEXT,
     feature_name TEXT,
-
+    current_mean FLOAT,
+    baseline_mean FLOAT,
     drift_score FLOAT,
     threshold FLOAT,
-
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
