@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 import time
 
 from app.model_loader import load_active_model, model, version
@@ -6,13 +7,21 @@ from app.logger import log_prediction
 from app.drift import check_drift
 from app.feature_name import FEATURE_NAMES
 
-app = FastAPI()
 
-@app.on_event("startup")
-def startup():
+# ---------------- LIFESPAN ----------------
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Loading active model...")
     load_active_model()
+    print("Model loaded successfully")
+    yield
+    print("Shutting down API...")
 
 
+app = FastAPI(lifespan=lifespan)
+
+
+# ---------------- PREDICT ----------------
 @app.post("/predict")
 def predict(payload: dict):
 
@@ -39,6 +48,7 @@ def predict(payload: dict):
     pred = pred[0]
     path = path[0]
 
+    # ---------- readable explanation ----------
     readable = []
     for step in path:
         idx = int(step.split("_")[1].split(" ")[0])
@@ -46,14 +56,14 @@ def predict(payload: dict):
 
     latency = (time.time() - start) * 1000
 
-    # ---------- DRIFT CHECK ----------
+    # ---------- drift ----------
     drift = check_drift(payload)
 
-    # ---------- LOG PREDICTION ----------
+    # ---------- log ----------
     log_prediction(
         version,
         payload,
-        pred,
+        int(pred),
         0.0,
         " → ".join(readable),
         latency
