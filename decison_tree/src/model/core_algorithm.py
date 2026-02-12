@@ -27,18 +27,14 @@ class DecisionTreeClassifierScratch:
         self.min_samples_split = min_samples_split
         self.root = None
 
-
-
     def fit(self, X, y):
         self.root = self._grow_tree(X, y, depth=0)
-
 
     def _grow_tree(self, X, y, depth):
 
         num_samples = X.shape[0]
         num_labels = len(np.unique(y))
 
-        # stopping conditions
         if (
             depth >= self.max_depth
             or num_labels == 1
@@ -47,13 +43,11 @@ class DecisionTreeClassifierScratch:
             leaf_value = self._most_common_label(y)
             return Node(value=leaf_value)
 
-        # find best split
         feature, threshold, g = best_split(X, y)
 
         if feature is None:
             return Node(value=self._most_common_label(y))
 
-        # split
         left_mask = X[:, feature] <= threshold
         right_mask = X[:, feature] > threshold
 
@@ -62,10 +56,33 @@ class DecisionTreeClassifierScratch:
 
         return Node(feature, threshold, left, right)
 
-
     def predict(self, X):
         return np.array([self._traverse_tree(x, self.root) for x in X])
 
+    def predict_with_path(self, X):
+        results = []
+        paths = []
+
+        for x in X:
+            node = self.root
+            path = []
+
+            while node.value is None:
+
+                feature = node.feature
+                threshold = node.threshold
+
+                if x[feature] <= threshold:
+                    path.append(f"feature_{feature} <= {threshold}")
+                    node = node.left
+                else:
+                    path.append(f"feature_{feature} > {threshold}")
+                    node = node.right
+
+            results.append(node.value)
+            paths.append(path)
+
+        return results, paths
 
     def _traverse_tree(self, x, node):
 
@@ -76,7 +93,6 @@ class DecisionTreeClassifierScratch:
             return self._traverse_tree(x, node.left)
 
         return self._traverse_tree(x, node.right)
-
 
     def _most_common_label(self, y):
         return np.bincount(y.astype(int)).argmax()

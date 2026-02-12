@@ -1,59 +1,58 @@
-import numpy as np 
+import numpy as np
 
-def gini(y):
-    """
-    Gini = 1 - sum(p^2)
-    
-    """
+def gini_from_counts(left_counts, right_counts):
+    left_total = left_counts.sum()
+    right_total = right_counts.sum()
 
-    if len(y) == 0:
-        return 0
+    if left_total == 0 or right_total == 0:
+        return 1e9
 
-    p1 = np.sum( y == 1)/ len(y)
-    p0 = 1 - p1
+    left_prob = left_counts / left_total
+    right_prob = right_counts / right_total
 
-    return 1 - (p1**2 + p0**2)
+    g_left = 1 - np.sum(left_prob**2)
+    g_right = 1 - np.sum(right_prob**2)
 
-
-def split_dataset(X, y, feature_index, threshold):
-
-    left_mask = X[:, feature_index] <= threshold
-    right_mask = X[:, feature_index] > threshold
-
-    X_left, y_left = X[left_mask], y[left_mask]
-    X_right, y_right = X[right_mask], y[right_mask]
-
-    return X_left, y_left, X_right, y_right
-
+    return (left_total * g_left + right_total * g_right) / (left_total + right_total)
 
 
 def best_split(X, y):
 
+    n_samples, n_features = X.shape
     best_feature = None
     best_threshold = None
-    best_gini = 1.0
+    best_gini = 1e9
 
-    n_samples, n_features = X.shape
+    classes = np.unique(y)
 
     for feature in range(n_features):
 
-        thresholds = np.unique(X[:, feature])
+        # sort feature
+        sorted_idx = np.argsort(X[:, feature])
+        X_sorted = X[sorted_idx]
+        y_sorted = y[sorted_idx]
 
-        for t in thresholds:
+        # class counts
+        right_counts = np.array([np.sum(y_sorted == c) for c in classes])
+        left_counts = np.zeros_like(right_counts)
 
-            X_l, y_l, X_r, y_r = split_dataset(X, y, feature, t)
+        for i in range(1, n_samples):
 
-            if len(y_l) == 0 or len(y_r) == 0:
+            c = y_sorted[i-1]
+            class_idx = np.where(classes == c)[0][0]
+
+            left_counts[class_idx] += 1
+            right_counts[class_idx] -= 1
+
+            # skip identical values
+            if X_sorted[i, feature] == X_sorted[i-1, feature]:
                 continue
 
-            g = (
-                (len(y_l)/n_samples) * gini(y_l) +
-                (len(y_r)/n_samples) * gini(y_r)
-            )
+            g = gini_from_counts(left_counts, right_counts)
 
             if g < best_gini:
                 best_gini = g
                 best_feature = feature
-                best_threshold = t
+                best_threshold = (X_sorted[i, feature] + X_sorted[i-1, feature]) / 2
 
     return best_feature, best_threshold, best_gini

@@ -30,14 +30,9 @@ MODELS_REGISTRY = """
 CREATE TABLE IF NOT EXISTS model_registry (
     id SERIAL PRIMARY KEY,
     model_name TEXT,
-    model_version TEXT,
-    model_path TEXT,
-    feature_view TEXT,
-
+    version TEXT,
+    path TEXT,
     is_active BOOLEAN DEFAULT FALSE,
-
-    metrics JSONB,
-
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -46,20 +41,12 @@ CREATE TABLE IF NOT EXISTS model_registry (
 TRAINING_RUNS_LOGS_SQL = """
 
 CREATE TABLE IF NOT EXISTS training_runs (
-    run_id SERIAL PRIMARY KEY,
-
-    model_name TEXT,
+    id SERIAL PRIMARY KEY,
     model_version TEXT,
-    feature_view TEXT,
-
     accuracy FLOAT,
     precision FLOAT,
     recall FLOAT,
-    f1_score FLOAT,
-
-    training_rows INT,
-    validation_rows INT,
-
+    f1 FLOAT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -67,7 +54,7 @@ CREATE TABLE IF NOT EXISTS training_runs (
 
 INFERENCE_LOGS = """
 
-CREATE TABLE inference_logs (
+CREATE TABLE IF NOT EXISTS inference_logs (
     id BIGSERIAL PRIMARY KEY,
     
     batch_id UUID,
@@ -101,18 +88,17 @@ PREDICTION_LOGS = """
 
 CREATE TABLE IF NOT EXISTS prediction_logs (
     id SERIAL PRIMARY KEY,
-
-    model_name TEXT,
     model_version TEXT,
-    feature_view TEXT,
-
-    input_data JSONB,
+    loan_id TEXT,
 
     prediction INT,
-    confidence FLOAT,
+    probability FLOAT,
+
+    age FLOAT,
+    income FLOAT,
+    credit_score FLOAT,
 
     latency_ms FLOAT,
-
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
